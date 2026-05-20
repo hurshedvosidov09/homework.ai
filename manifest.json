@@ -1,0 +1,21 @@
+{
+  "name": "Homework AI",
+  "short_name": "HomeworkAI",
+  "description": "AI homework solver with OCR, streaming answers, Firebase auth, and PWA support.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#05060e",
+  "theme_color": "#4ba2ff",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192.png?text=AI",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512.png?text=AI",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

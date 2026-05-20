@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#05060e" />
+  <title>Homework AI</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%234ba2ff'/%3E%3Ctext x='50' y='60' font-size='52' fill='white' text-anchor='middle' font-family='Inter'%3EAI%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css" integrity="sha512-fTzu5J8MGt2nGZPv+cD5+2psxFb0gJp4qY/POWArd51VqltDz1eM2Q9Km1nYL23gV6WzvUAJTQuj757bVjxJ+Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" integrity="sha512-Bs5KKc4Ev4wJ9q82WQ/3+3kbiwOaZPXj1vnV4+tbGvLPJoReH7cG9snIoHT7axAseZNaK9D43gHp0f3Lk3hIrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.2/dist/tesseract.min.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://www.desmos.com/api/v1.6/calculator.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar glass-card">
+      <div class="brand">
+        <div class="brand-icon">AI</div>
+        <div>
+          <h1>Homework AI</h1>
+          <p>Smart algebra & physics tutor</p>
+        </div>
+      </div>
+
+      <div class="profile-card glass-card">
+        <div class="profile-head">
+          <div class="profile-avatar">H</div>
+          <div>
+            <p id="profileName" class="profile-label">Guest user</p>
+            <p id="profileHint" class="profile-hint">Sign in to sync solutions.</p>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button id="loginBtn" class="primary-btn">Sign in with Google</button>
+          <button id="logoutBtn" class="ghost-btn hidden">Sign out</button>
+        </div>
+      </div>
+      <div class="conversations-list glass-card" id="conversationsListCard">
+        <div class="conversations-header">
+          <h4>Your Conversations</h4>
+          <button id="newConversationBtn" class="ghost-btn">New</button>
+        </div>
+        <div id="conversationsList" class="conversations-list-body">
+          <p class="small-text">Sign in to view saved conversations.</p>
+        </div>
+      </div>
+
+      <div class="sidebar-menu">
+        <button class="menu-item active">Chat Tutor</button>
+        <button class="menu-item">Solve Homework</button>
+        <button class="menu-item">OCR & Camera</button>
+        <button class="menu-item">Physics Tools</button>
+      </div>
+
+      <div class="sidebar-footer">
+        <p>Startup-ready learning assistant with secure backend, cloud saves, and instant math help.</p>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar glass-card">
+        <div>
+          <span class="top-tag">AI Tutor</span>
+          <h2>Homework AI for students and creators</h2>
+        </div>
+        <div class="status-chip">
+          <span class="dot"></span>
+          Secure backend live
+        </div>
+      </header>
+
+      <section class="hero-panel glass-card">
+        <div class="hero-copy">
+          <h1>Professional AI homework assistant</h1>
+          <p>Scan problems, capture images, and get step-by-step algebra and physics solutions with formula rendering, markdown, and cloud synced history.</p>
+          <div class="hero-badges">
+            <span>OCR rus + eng</span>
+            <span>Streaming AI</span>
+            <span>PWA install</span>
+          </div>
+        </div>
+        <div class="hero-card gradient-card">
+          <div class="hero-card-header">
+            <span>Startup-ready features</span>
+          </div>
+          <div class="hero-card-body">
+            <p><strong>Private API key</strong> hidden in backend</p>
+            <p><strong>Firebase login</strong> and cloud conversation storage</p>
+            <p><strong>Physics tools</strong> with unit conversion and formula cards</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="chat-window glass-card" id="chatWindow">
+          <div class="chat-title">
+            <div>
+              <h3>Conversation</h3>
+              <p>Live chat, stream responses, and cloud sync.</p>
+            </div>
+            <button id="clearHistory" class="ghost-btn">Clear</button>
+          </div>
+          <div class="chat-feed" id="chatFeed"></div>
+        </div>
+
+        <aside class="tool-panel glass-card">
+          <div class="upload-section" id="dropArea">
+            <div class="upload-icon">📷</div>
+            <h4>Smart homework scanner</h4>
+            <p>Upload or capture a problem photo, then scan directly into the AI assistant.</p>
+
+            <div class="upload-actions">
+              <button id="uploadPhotoBtn" class="primary-btn">Upload Photo</button>
+              <button id="openCameraBtn" class="ghost-btn">Open Camera</button>
+            </div>
+
+            <div class="preview-panel hidden" id="previewPanel">
+              <img id="previewImage" alt="Homework preview" />
+              <div class="preview-text" id="previewText">Awaiting a picture of your homework.</div>
+            </div>
+
+            <div class="scanner-controls">
+              <button id="scanButton" class="secondary-btn">Scan Homework</button>
+              <button id="solveButton" class="primary-btn">Solve with AI</button>
+            </div>
+
+            <div class="progress-wrap hidden" id="scanProgressWrap">
+              <span id="scanProgressText">Scanning image... 0%</span>
+              <div class="progress-bar"><div id="scanProgressFill"></div></div>
+            </div>
+
+            <input type="file" id="fileInput" accept="image/*" hidden />
+          </div>
+
+          <div class="toolkit-card glass-card">
+            <h4>Physics toolkit</h4>
+            <div class="tool-card-grid">
+              <button id="openConverter" class="ghost-btn">Unit converter</button>
+              <button id="openGraph" class="ghost-btn">Graph visualizer</button>
+            </div>
+            <div class="formula-list">
+              <div class="formula-card">
+                <div>Newton's 2nd Law</div>
+                <strong>F = m · a</strong>
+              </div>
+              <div class="formula-card">
+                <div>Kinetic energy</div>
+                <strong>E = ½ m v²</strong>
+              </div>
+              <div class="formula-card">
+                <div>Ohm's law</div>
+                <strong>V = I · R</strong>
+              </div>
+            </div>
+            <div class="physics-tools">
+              <div class="converter-panel" id="converterPanel">
+                <label for="converterInput">Quick unit converter</label>
+                <input id="converterInput" class="converter-input" placeholder="e.g. 12 m to cm" />
+                <button id="converterRun" class="secondary-btn">Convert</button>
+                <p id="converterResult" class="preview-text">Try entering a quantity like <strong>5 km to m</strong>.</p>
+              </div>
+              <div class="graph-card">
+                <div class="graph-title">Graph visualizer</div>
+                <div class="graph-controls">
+                  <input id="equationInput" class="graph-input" placeholder="Enter equation, e.g. y=sin(x) or y=2x+1" />
+                  <button id="plotEquationBtn" class="secondary-btn">Plot</button>
+                </div>
+                <div id="desmosGraph" style="width:100%;height:260px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="response-preview glass-card" id="ocrPreviewCard">
+            <h4>Extracted text</h4>
+            <p class="small-text">OCR outputs will appear here for review before AI solving.</p>
+            <div id="ocrPreviewText" class="ocr-preview-text">No text uploaded yet.</div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="composer glass-card">
+        <div class="composer-header">
+          <div>
+            <h3>Ask your AI tutor</h3>
+            <p>Enter a question, paste extracted text, or choose a mode below.</p>
+          </div>
+          <div class="typing-status" id="typingStatus">AI is ready</div>
+        </div>
+
+        <textarea id="promptInput" placeholder="Type your question or paste a problem..." rows="3" spellcheck="false"></textarea>
+
+        <div class="intent-panel">
+          <button id="intentDefault" class="intent-btn active">Standard</button>
+          <button id="intentEasier" class="intent-btn">Explain Easier</button>
+          <button id="intentShort" class="intent-btn">Show Only Answer</button>
+          <button id="intentSimilar" class="intent-btn">Generate Similar</button>
+          <button id="intentTranslate" class="intent-btn">Translate Solution</button>
+        </div>
+
+        <div class="composer-actions">
+          <div class="hint-pill">Tap submit or use the camera scanner.</div>
+          <div class="action-buttons">
+            <button id="submitBtn" class="primary-btn">Send</button>
+            <button id="voiceBtn" class="secondary-btn">Voice Reading</button>
+            <button id="saveButton" class="ghost-btn">Save conversation</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="camera-modal hidden" id="cameraModal">
+    <div class="camera-panel glass-card">
+      <div class="camera-header">
+        <div>
+          <h4>Camera Capture</h4>
+          <p class="small-text">Use your device camera to photograph homework problems.</p>
+        </div>
+        <button id="closeCameraBtn" class="ghost-btn">Close</button>
+      </div>
+      <video id="cameraVideo" autoplay playsinline muted></video>
+      <div class="camera-actions">
+        <button id="captureBtn" class="primary-btn">Capture</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="global-spinner hidden" id="spinnerOverlay">
+    <div class="spinner"></div>
+    <p id="spinnerText">Solving your problem...</p>
+  </div>
+
+  <div class="toast hidden" id="toastMessage"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
